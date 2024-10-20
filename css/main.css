@@ -141,8 +141,8 @@ iframe {
   justify-content: var(--center);
   align-items: var(--center);
   padding: var(--font_15);
-  background: var(--login_bg);
-  border-bottom-left-radius: var(--onehundred_percent);
+  background: #212121;
+  border-top-right-radius: var(--onehundred_percent);
   background-size: var(--bg-cover);
 }
 .wrap-login100 {
