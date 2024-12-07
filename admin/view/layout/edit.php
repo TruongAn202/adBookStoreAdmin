@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Xử lý file ảnh
         $anh = $product['anh']; // Giữ ảnh cũ nếu không có ảnh mới
         if (isset($_FILES['anh']) && $_FILES['anh']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = '../../img-sanpham/';  // Thư mục lưu ảnh
+            $uploadDir = 'assets/img-sanpham/';  // Thư mục lưu ảnh
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true); // Tạo thư mục nếu chưa tồn tại
             }
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="assets/css/main.css">
+    <link rel="stylesheet" type="text/css" href="assets/css1/main.css">
 </head>
 
 <body class="app sidebar-mini rtl">
@@ -157,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <!-- Kiểm tra nếu sản phẩm có ảnh -->
                                     <?php if (!empty($product['anh'])): ?>
                                         <!-- Thêm đường dẫn đến thư mục ảnh -->
-                                        <img src="../../img-sanpham/<?php echo $product['anh']; ?>" alt="Ảnh sản phẩm" style="max-width: 150px; max-height: 150px;">
+                                        <img src="assets/img-sanpham/<?php echo $product['anh']; ?>" alt="Ảnh sản phẩm" style="max-width: 150px; max-height: 150px;">
                                     <?php else: ?>
                                         <!-- Nếu không có ảnh, hiển thị ảnh mặc định -->
                                         <img src="path/to/default-image.jpg" alt="Ảnh mặc định" style="max-width: 150px; max-height: 150px;">

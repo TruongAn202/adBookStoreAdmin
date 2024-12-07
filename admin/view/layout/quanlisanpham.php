@@ -79,7 +79,8 @@ if (isset($_SESSION['success_message'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Main CSS-->
-    <link rel="stylesheet" type="text/css" href="assets/css/main.css">
+    <link rel="stylesheet" type="text/css" href="assets/css1/main.css">
+   
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <!-- or -->
     <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
@@ -108,7 +109,7 @@ if (isset($_SESSION['success_message'])) {
     <!-- Sidebar menu-->
     <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
     <aside class="app-sidebar">
-        <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="assets/images/Admin.png" width="50px"
+        <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="/images/Admin.png" width="50px"
                 alt="User Image">
             <div>
                 <p class="app-sidebar__user-name"><b>Admin</b></p>
@@ -117,7 +118,7 @@ if (isset($_SESSION['success_message'])) {
         </div>
         <hr>
         <ul class="app-menu">
-            <li><a class="app-menu__item " href="Dashboard.php"><i class='app-menu__icon bx bx-tachometer'></i><span
+            <li><a class="app-menu__item " href="bangDK.php"><i class='app-menu__icon bx bx-tachometer'></i><span
                         class="app-menu__label">Bảng điều khiển</span></a></li>
 
             <li><a class="app-menu__item active" href="quanlisanpham.php"><i
@@ -315,7 +316,7 @@ if (isset($_SESSION['success_message'])) {
             }
         }
         oTable = $('#sampleTable').DataTable({
-            searching: false // Tắt tính năng tìm kiếm
+            searching: true // Tắt tính năng tìm kiếm
         });
         // $(document).ready(function() {
         //     // Khởi tạo DataTable với phân trang

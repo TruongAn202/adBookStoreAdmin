@@ -40,30 +40,34 @@ $stmtTG->execute();
 $tacgia = $stmtTG->fetchAll(PDO::FETCH_ASSOC);
 
 
+
 // Tiếp tục xử lý thêm thông tin sách vào database
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Mã sách tự sinh
     $maSach = generateBookCode();
     $tenSach = $_POST['tenSach'];
     $soLuong = $_POST['soLuong'];
-    $tinhTrang = $_POST['tinhTrang'];
+   
     $maLoai = $_POST['maLoai'];
     $maNXB = $_POST['maNXB'];
     $giaBan = $_POST['giaBan'];
     $giaKhuyenMai = $_POST['giaKhuyenMai'];
     $maTG = $_POST['maTG'];
+    $moTa= $_POST['moTa'];
+    $moTaDayDu= $_POST['moTaDayDu'];
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Kiểm tra dữ liệu đầu vào từ form
         $tenSach = isset($_POST['tenSach']) ? $_POST['tenSach'] : '';
         $soLuong = isset($_POST['soLuong']) ? $_POST['soLuong'] : 0;
-        $tinhTrang = isset($_POST['tinhTrang']) ? $_POST['tinhTrang'] : '';
         $maLoai = isset($_POST['maLoai']) ? $_POST['maLoai'] : '';
         $maNXB = isset($_POST['maNXB']) ? $_POST['maNXB'] : '';
         $giaBan = isset($_POST['giaBan']) ? $_POST['giaBan'] : 0;
         $giaKhuyenMai = isset($_POST['giaKhuyenMai']) ? $_POST['giaKhuyenMai'] : 0;
         $maTG = isset($_POST['maTG']) ? $_POST['maTG'] : '';
-    
+        $moTa = isset($_POST['moTa']) ? $_POST['moTa'] : '';
+        $moTaDayDu= isset($_POST['moTaDayDu']) ? $_POST['moTaDayDu'] : '';
+        $tinhTrang = ($soLuong <= 0) ? "Hết Hàng" : "Còn Hàng";
         // Mã sách tự sinh
         $maSach = generateBookCode();
     
@@ -77,8 +81,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Di chuyển ảnh vào thư mục
             if (move_uploaded_file($fileTmpPath, $uploadFilePath)) {
                 // Câu lệnh SQL để chèn dữ liệu vào bảng sách
-                $stmtInsert = $conn->prepare("INSERT INTO sach (maSach, tenSach, SoLuong, TinhTrang, maLoai, maNXB, gia, giaKM, maTG, anh) 
-                                            VALUES (:maSach, :tenSach, :soLuong, :tinhTrang, :maLoai, :maNXB, :giaBan, :giaKhuyenMai, :maTG, :anh)");
+                $stmtInsert = $conn->prepare("INSERT INTO sach (maSach, tenSach, SoLuong, TinhTrang, maLoai, maNXB, gia, giaKM, maTG, anh,moTa,moTaDayDu) 
+                                            VALUES (:maSach, :tenSach, :soLuong, :tinhTrang, :maLoai, :maNXB, :giaBan, :giaKhuyenMai, :maTG, :anh,:moTa,:moTaDayDu)");
     
                 // Liên kết các tham số với giá trị
                 $stmtInsert->bindParam(':maSach', $maSach);
@@ -90,6 +94,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmtInsert->bindParam(':giaBan', $giaBan);
                 $stmtInsert->bindParam(':giaKhuyenMai', $giaKhuyenMai);
                 $stmtInsert->bindParam(':maTG', $maTG);
+                $stmtInsert->bindParam(':moTa', $moTa);
+                $stmtInsert->bindParam(':moTaDayDu', $moTaDayDu);
                 $stmtInsert->bindParam(':anh', $fileName); // Lưu tên ảnh vào CSDL
     
                 // Thực thi câu lệnh SQL
@@ -124,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Main CSS-->
-    <link rel="stylesheet" type="text/css" href="assets/css/main.css">
+    <link rel="stylesheet" type="text/css" href="assets/css1/main.css">
     <!-- Font-icon css-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
@@ -145,7 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
     <aside class="app-sidebar">
         <ul class="app-menu">
-            <li><a class="app-menu__item " href="Dashboard.php"><i class='app-menu__icon bx bx-tachometer'></i><span
+            <li><a class="app-menu__item " href="bangDK.php"><i class='app-menu__icon bx bx-tachometer'></i><span
                         class="app-menu__label">Bảng điều khiển</span></a></li>
             <li><a class="app-menu__item active" href="quanlisanpham.php"><i
                         class='app-menu__icon bx bx-purchase-tag-alt'></i><span class="app-menu__label">Quản lý sản phẩm</span></a></li>
@@ -205,16 +211,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <input class="form-control" type="number" name="soLuong" placeholder="Nhập số lượng">
                                 </div>
 
-                                <!-- Tình trạng -->
+                                
+                               
+                                
                                 <div class="form-group col-md-3">
-                                    <label class="control-label">Tình trạng</label>
-                                    <select class="form-control" name="tinhTrang">
-                                        <option>-- Chọn tình trạng --</option>
-                                        <option value="con">Còn hàng</option>
-                                        <option value="het">Hết hàng</option>
-                                    </select>
+                                    <label class="control-label">Mô tả</label>
+                                    <input class="form-control" type="text" name="moTa" placeholder="Nhập Mô Tả">
                                 </div>
-
+                                <div class="form-group col-md-3">
+                                    <label class="control-label">Mô tả đầy đủ</label>
+                                    <input class="form-control" type="text" name="moTaDayDu" placeholder="Nhập Mô Tả Đầy Đủ">
+                                </div>
                                 <!-- Danh mục -->
                                 <div class="form-group col-md-3">
                                     <label class="control-label">Danh Mục</label>

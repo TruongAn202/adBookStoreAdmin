@@ -24,7 +24,7 @@ if ($conn === null) {
   echo "Không thể kết nối đến cơ sở dữ liệu.";
   exit();
 }
-function searchInvoices($conn, $searchTerm)//Tìm Kiếm
+function searchInvoices($conn, $searchTerm) //Tìm Kiếm
 {
   $sql = "SELECT 
               h.maHD, 
@@ -78,7 +78,7 @@ if ($searchTerm) {
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Main CSS-->
-  <link rel="stylesheet" type="text/css" href="assets/css/main.css">
+  <link rel="stylesheet" type="text/css" href="assets/css1/main.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
   <!-- or -->
   <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
@@ -100,7 +100,7 @@ if ($searchTerm) {
     <!-- Navbar Right Menu-->
     <ul class="app-nav">
       <!-- User Menu-->
-      <li><a class="app-nav__item" href="/index.html"><i class='bx bx-log-out bx-rotate-180'></i> </a>
+      <li><a class="app-nav__item" href="#"><i class='bx bx-log-out bx-rotate-180'></i> </a>
       </li>
     </ul>
   </header>
@@ -116,7 +116,7 @@ if ($searchTerm) {
     </div>
     <hr>
     <ul class="app-menu">
-      <li><a class="app-menu__item " href="Dashboard.php"><i class='app-menu__icon bx bx-tachometer'></i><span
+      <li><a class="app-menu__item " href="bangDK.php"><i class='app-menu__icon bx bx-tachometer'></i><span
             class="app-menu__label">Bảng điều khiển</span></a></li>
 
       <li><a class="app-menu__item" href="quanlisanpham.php"><i
@@ -162,25 +162,41 @@ if ($searchTerm) {
                 </tr>
               </thead>
               <tbody id="tableResults">
-                <?php foreach ($result as $result): ?>
+                <?php foreach ($result as $result1): ?>
                   <tr>
-                    <td><?php echo $result['maHD']; ?></td>
-                    <td><?php echo $result['tenNguoiNhan']; ?></td>
-                    <td><?php echo $result['tenSach']; ?></td>
-                    <td><?php echo $result['soLuong']; ?></td>
-                    <td><?php echo $result['donGia']; ?></td>
-                    <td><?php echo $result['diaChiNguoiNhan']; ?></td>
-                    <td><?php echo $result['soDienThoaiHD']; ?></td>
-                    <td><?php echo $result['ngayLapHD']; ?></td>
-                    <td><?php echo isset($result['ngayNhan']) && !empty($result['ngayNhan']) ? $result['ngayNhan'] : ''; ?></td>
-                    <td><?php echo $result['trangThaiHD']; ?></td>
-                    <td><?php echo $result['phuongThucThanhToan']; ?></td>
-                    <td><?php echo $result['phuongThucGiaoHang']; ?></td>
-                    <td>
-                      <button class="btn btn-danger" onclick="updateTrangThaiDH('<?php echo $result['maHD']; ?>')">
-                        Cập Nhật Trạng Thái Đơn Hàng
-                      </button>
-                    </td>
+                    <td><?php echo $result1['maHD']; ?></td>
+                    <td><?php echo $result1['tenNguoiNhan']; ?></td>
+                    <td><?php echo $result1['tenSach']; ?></td>
+                    <td><?php echo $result1['soLuong']; ?></td>
+                    <td><?php echo $result1['donGia']; ?></td>
+                    <td><?php echo $result1['diaChiNguoiNhan']; ?></td>
+                    <td><?php echo $result1['soDienThoaiHD']; ?></td>
+                    <td><?php echo $result1['ngayLapHD']; ?></td>
+                    <td><?php echo isset($result1['ngayNhan']) && !empty($result1['ngayNhan']) ? $result1['ngayNhan'] : ''; ?></td>
+                    <<td>
+                      <?php
+                      // Mảng ánh xạ trạng thái
+                      $statusMap = [
+                        'choxuly' => 'Chờ Xử Lý',
+                        'danggiao' => 'Đang Giao',
+                        'dagiao' => 'Đã Giao',
+                        'dahuy' => 'Đã Hủy'
+                      ];
+
+                      // Lấy trạng thái từ cơ sở dữ liệu
+                      $trangThai = $result1['trangThaiHD'];
+
+                      // Kiểm tra và hiển thị trạng thái thân thiện
+                      echo isset($statusMap[$trangThai]) ? $statusMap[$trangThai] : 'Trạng thái không xác định';
+                      ?>
+                      </td>
+                      <td><?php echo $result1['phuongThucThanhToan']; ?></td>
+                      <td><?php echo $result1['phuongThucGiaoHang']; ?></td>
+                      <td>
+                        <button class="btn btn-danger" onclick="updateTrangThaiDH('<?php echo $result1['maHD']; ?>')">
+                          Cập Nhật Trạng Thái Đơn Hàng
+                        </button>
+                      </td>
 
                   </tr>
                 <?php endforeach; ?>

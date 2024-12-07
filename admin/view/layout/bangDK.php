@@ -125,7 +125,8 @@ $conn = null;
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Main CSS-->
-  <link rel="stylesheet" type="text/css" href="assets/css/main.css">
+  
+  <link rel="stylesheet" type="text/css" href="assets/css1/main.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
   <!-- or -->
   <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
@@ -156,7 +157,8 @@ $conn = null;
   <!-- Sidebar menu-->
   <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
   <aside class="app-sidebar">
-    <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="/images/Admin.png" width="50px"
+  
+     <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="/images/Admin.png" width="50px"
         alt="User Image">
       <div>
         <p class="app-sidebar__user-name"><b>Admin</b></p>
@@ -165,7 +167,7 @@ $conn = null;
     </div>
     <hr>
     <ul class="app-menu">
-      <li><a class="app-menu__item active" href="Dashboard.php"><i class='app-menu__icon bx bx-tachometer'></i><span
+      <li><a class="app-menu__item active" href="bangDk.php"><i class='app-menu__icon bx bx-tachometer'></i><span
             class="app-menu__label">Bảng điều khiển</span></a></li>
 
       <li><a class="app-menu__item " href="quanlisanpham.php"><i
