@@ -39,9 +39,11 @@ if (isset($_POST['maHD'])) {
                 echo 'Trạng thái không hợp lệ.';
                 exit();
         }
-        
 
-        $updateSql = "UPDATE hoaDon SET trangThaiHD = :newTrangThai, ngayNhan = CURDATE() WHERE maHD = :maHD";
+
+        $updateSql = "UPDATE hoaDon SET trangThaiHD = :newTrangThai,  ngayNhan = CASE 
+            WHEN :newTrangThai = 'dagiao' THEN CURDATE() 
+            ELSE ngayNhan END  WHERE maHD = :maHD";
         $updateStmt = $conn->prepare($updateSql);
         $updateStmt->bindParam(':newTrangThai', $newTrangThai);
         $updateStmt->bindParam(':maHD', $maHD);

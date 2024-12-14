@@ -33,79 +33,67 @@ $stmtLoai->execute();
 $loaiSachList = $stmtLoai->fetchAll(PDO::FETCH_ASSOC);
 
 // Lấy các tình trạng sách
-$tinhTrangOptions = ['Còn hàng', 'Hết hàng']; // Hoặc có thể lấy từ cơ sở dữ liệu nếu có bảng TìnhTrạng
-// Xử lý cập nhật thông tin sản phẩm
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $tenSach = $_POST['tenSach'];
-    $giaKM = $_POST['giaKM'];
-    $soLuong = $_POST['SoLuong'];
-    $tinhTrang = $_POST['TinhTrang'];
-    $maLoai = $_POST['maLoai'];
+$tinhTrangOptions = ['Còn hàng', 'Hết hàng']; 
 
-    // Xử lý file ảnh
-    // Xử lý file ảnh
-    // Xử lý file ảnh
     $anh = $product['anh']; // Giữ ảnh cũ nếu không có ảnh mới
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tenSach = $_POST['tenSach'];
         $giaKM = $_POST['giaKM'];
         $soLuong = $_POST['SoLuong'];
-        $tinhTrang = $_POST['TinhTrang'];
         $maLoai = $_POST['maLoai'];
-
+        $moTa = $_POST['moTa'];
+        $moTaDayDu = $_POST['moTaDayDu'];
+    
         // Xử lý file ảnh
         $anh = $product['anh']; // Giữ ảnh cũ nếu không có ảnh mới
-        if (isset($_FILES['anh']) && $_FILES['anh']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = 'assets/img-sanpham/';  // Thư mục lưu ảnh
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true); // Tạo thư mục nếu chưa tồn tại
-            }
-
-            // Kiểm tra định dạng file ảnh (chấp nhận JPG, JPEG, PNG, GIF)
-            $fileName = basename($_FILES['anh']['name']);
-            $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-
-            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-
-            // Kiểm tra nếu định dạng ảnh hợp lệ
-            if (in_array($fileExtension, $allowedExtensions)) {
-                $targetPath = $uploadDir . $fileName;
-
-                // Di chuyển file vào thư mục đích
-                if (move_uploaded_file($_FILES['anh']['tmp_name'], $targetPath)) {
-                    // Nếu ảnh tải lên thành công, chỉ lưu tên ảnh vào cơ sở dữ liệu
-                    $anh = $fileName;  // Lưu chỉ tên ảnh, không bao gồm đường dẫn
+        if (isset($_FILES['anh1']) && $_FILES['anh1']['error'] == 0) {
+            $fileTmpPath = $_FILES['anh1']['tmp_name'];
+            $fileName = $_FILES['anh1']['name'];
+    
+            // Đường dẫn 1 - nằm trong thư mục admin
+            $uploadDir1 = $_SERVER['DOCUMENT_ROOT'] . '/adBookStoreUser/admin/view/layout/' . 'assets/img-sanpham/';
+            $uploadFilePath1 = $uploadDir1 . $fileName;
+    
+            // Đường dẫn 2 - view/layout/assets/image/
+            $uploadDir2 = $_SERVER['DOCUMENT_ROOT'] . '/adBookStoreUser/view/layout/' . 'assets/image/';
+            $uploadFilePath2 = $uploadDir2 . $fileName;
+    
+            // Di chuyển ảnh vào thư mục admin
+            if (move_uploaded_file($fileTmpPath, $uploadFilePath1)) {
+                // Sao chép file đến thư mục thứ hai
+                if (copy($uploadFilePath1, $uploadFilePath2)) {
+                    // Cập nhật tên file ảnh mới vào biến $anh
+                    $anh = $fileName;
                 } else {
-                    echo "Lỗi khi tải ảnh lên: " . error_get_last()['message'];
+                    echo "Lỗi khi sao chép file vào thư mục thứ hai.";
+                    exit();
                 }
             } else {
-                echo "Định dạng ảnh không hợp lệ. Chỉ chấp nhận JPG, JPEG, PNG, hoặc GIF.";
+                echo "Lỗi khi tải lên file vào thư mục đầu tiên.";
                 exit();
             }
-        } else {
-            // Nếu không có ảnh mới, giữ lại ảnh cũ
-            $anh = $product['anh'];
         }
-
-        // Cập nhật sản phẩm vào cơ sở dữ liệu
-        $updateSQL = "UPDATE Sach SET tenSach = :tenSach, giaKM = :giaKM, anh = :anh, SoLuong = :soLuong, TinhTrang = :tinhTrang, maLoai = :maLoai WHERE maSach = :maSach";
+        // Cập nhật thông tin sản phẩm
+        $updateSQL = "UPDATE Sach SET tenSach = :tenSach, giaKM = :giaKM, anh = :anh, SoLuong = :soLuong, maLoai = :maLoai, moTa = :moTa, moTaDayDu = :moTaDayDu WHERE maSach = :maSach";
         $stmt = $conn->prepare($updateSQL);
         $stmt->bindParam(':tenSach', $tenSach);
         $stmt->bindParam(':giaKM', $giaKM);
-        $stmt->bindParam(':anh', $anh);  // Cập nhật tên ảnh mới (chỉ tên ảnh)
+        $stmt->bindParam(':anh', $anh);
         $stmt->bindParam(':soLuong', $soLuong);
-        $stmt->bindParam(':tinhTrang', $tinhTrang);
         $stmt->bindParam(':maLoai', $maLoai);
+        $stmt->bindParam(':moTa', $moTa);
+        $stmt->bindParam(':moTaDayDu', $moTaDayDu);
         $stmt->bindParam(':maSach', $maSach);
-
+    
         if ($stmt->execute()) {
-            header("Location: quanlisanpham.php"); // Quay lại trang danh sách sản phẩm
+            header("Location: quanlisanpham.php");
             exit();
         } else {
             echo "Cập nhật thất bại.";
         }
     }
-}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -147,9 +135,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
 
                             <div class="form-group">
-                                <label for="anh">Ảnh</label>
+                                <label for="anh1">Ảnh</label>
                                 <!-- Thay đổi input để nhận file -->
-                                <input type="file" class="form-control" id="anh" name="anh" accept="image/*">
+                                <input type="file" class="form-control" id="anh1" name="anh1" accept="image/*">
                                 <!-- Hiển thị ảnh hiện tại nếu có -->
                                 <div class="mt-2">
                                     <label>Ảnh hiện tại:</label>
@@ -158,9 +146,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <?php if (!empty($product['anh'])): ?>
                                         <!-- Thêm đường dẫn đến thư mục ảnh -->
                                         <img src="assets/img-sanpham/<?php echo $product['anh']; ?>" alt="Ảnh sản phẩm" style="max-width: 150px; max-height: 150px;">
-                                    <?php else: ?>
+
                                         <!-- Nếu không có ảnh, hiển thị ảnh mặc định -->
-                                        <img src="path/to/default-image.jpg" alt="Ảnh mặc định" style="max-width: 150px; max-height: 150px;">
+
                                     <?php endif; ?>
                                 </div>
 
@@ -169,15 +157,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="SoLuong">Số Lượng</label>
                                 <input type="number" class="form-control" id="SoLuong" name="SoLuong" value="<?php echo $product['SoLuong']; ?>" required>
                             </div>
-
                             <div class="form-group">
-                                <label for="TinhTrang">Tình Trạng</label>
-                                <select class="form-control" id="TinhTrang" name="TinhTrang" required>
-                                    <?php foreach ($tinhTrangOptions as $option): ?>
-                                        <option value="<?php echo $option; ?>" <?php echo ($product['TinhTrang'] == $option) ? 'selected' : ''; ?>><?php echo $option; ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <label for="moTa">Mô Tả</label>
+                                <input type="text" id="moTa" name="moTa" value="<?php echo $product['moTa']; ?>">
+                                
                             </div>
+                            <div class="form-group">
+                                <label for="moTaDayDu">Mô tả đầy đủ</label>
+                                <input type="text" id="moTaDayDu" name="moTaDayDu" value="<?php echo $product['moTaDayDu']; ?>">
+                            </div>
+                            <!-- <div class="form-group"> -->
+                                <!-- <label for="TinhTrang">Tình Trạng</label> -->
+                                <!-- <select class="form-control" id="TinhTrang" name="TinhTrang" required> -->
+                                   
+                            <!-- </div> -->
 
                             <div class="form-group">
                                 <label for="maLoai">Danh Mục</label>

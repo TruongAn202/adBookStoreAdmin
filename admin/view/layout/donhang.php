@@ -37,7 +37,7 @@ function searchInvoices($conn, $searchTerm) //Tìm Kiếm
               h.phuongThucThanhToan, 
               c.soLuong, 
               c.donGia,
-              s.tenSach
+              s.tenSach,
               h.phuongThucGiaoHang  
           FROM 
               hoadon h
@@ -56,7 +56,7 @@ function searchInvoices($conn, $searchTerm) //Tìm Kiếm
 $searchTerm = '';
 if (isset($_GET['search'])) {
   // Xử lý bảo mật và tránh SQL injection
-  $searchTerm = htmlspecialchars($_GET['search']);
+  $searchTerm = ($_GET['search']);
 }
 
 // Nếu có từ khóa tìm kiếm, thực hiện tìm kiếm theo mã hóa đơn
@@ -100,14 +100,14 @@ if ($searchTerm) {
     <!-- Navbar Right Menu-->
     <ul class="app-nav">
       <!-- User Menu-->
-      <li><a class="app-nav__item" href="#"><i class='bx bx-log-out bx-rotate-180'></i> </a>
+      <li><a class="app-nav__item" href="/adBookStoreUser/admin/index.php"><i class='bx bx-log-out bx-rotate-180'></i> </a>
       </li>
     </ul>
   </header>
   <!-- Sidebar menu-->
   <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
   <aside class="app-sidebar">
-    <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="/images/Admin.png" width="50px"
+    <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="assets/images/Admin.png" width="50px"
         alt="User Image">
       <div>
         <p class="app-sidebar__user-name"><b>Admin</b></p>
@@ -168,12 +168,12 @@ if ($searchTerm) {
                     <td><?php echo $result1['tenNguoiNhan']; ?></td>
                     <td><?php echo $result1['tenSach']; ?></td>
                     <td><?php echo $result1['soLuong']; ?></td>
-                    <td><?php echo $result1['donGia']; ?></td>
+                    <td><?php echo number_format($result1['donGia'], 0, ',', '.'); ?> VND</td>
                     <td><?php echo $result1['diaChiNguoiNhan']; ?></td>
                     <td><?php echo $result1['soDienThoaiHD']; ?></td>
                     <td><?php echo $result1['ngayLapHD']; ?></td>
                     <td><?php echo isset($result1['ngayNhan']) && !empty($result1['ngayNhan']) ? $result1['ngayNhan'] : ''; ?></td>
-                    <<td>
+                    <td>
                       <?php
                       // Mảng ánh xạ trạng thái
                       $statusMap = [
@@ -225,9 +225,9 @@ if ($searchTerm) {
   <script type="text/javascript" src="js/plugins/jquery.dataTables.min.js"></script>
   <script type="text/javascript" src="js/plugins/dataTables.bootstrap.min.js"></script>
   <script type="text/javascript">
-    oTable = $('#sampleTable').DataTable({
-      searching: false // Tắt tính năng tìm kiếm
-    });
+    // oTable = $('#sampleTable').DataTable({
+    //   searching: false // Tắt tính năng tìm kiếm
+    // });
 
     function searchBooks() {
       const query = document.getElementById('searchInput').value.trim().toLowerCase(); // Lấy giá trị tìm kiếm và chuyển thành chữ thường
@@ -254,10 +254,10 @@ if ($searchTerm) {
         rows.forEach(row => row.style.display = '');
       }
     }
-    $('#all').click(function(e) {
-      $('#sampleTable tbody :checkbox').prop('checked', $(this).is(':checked'));
-      e.stopImmediatePropagation();
-    });
+    // $('#all').click(function(e) {
+    //   $('#sampleTable tbody :checkbox').prop('checked', $(this).is(':checked'));
+    //   e.stopImmediatePropagation();
+    // });
 
     function updateTrangThaiDH(maHD) {
       // Gửi yêu cầu AJAX

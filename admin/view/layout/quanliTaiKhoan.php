@@ -55,7 +55,7 @@
 
 
         <!-- User Menu-->
-        <li><a class="app-nav__item" href="/index.html"><i class='bx bx-log-out bx-rotate-180'></i> </a>
+        <li><a class="app-nav__item" href="/adBookStoreUser/admin/index.php"><i class='bx bx-log-out bx-rotate-180'></i> </a>
 
         </li>
       </ul>
@@ -102,7 +102,7 @@
               <table class="table table-hover table-bordered js-copytextarea" cellpadding="0" cellspacing="0" border="0" id="sampleTable">
                 <thead>
                   <tr>
-                    <th width="10"><input type="checkbox" id="all"></th>
+              
                     <th>Email</th>
                     <th width="150">UserName</th>
                     <th width="20">Password</th>
@@ -119,7 +119,7 @@
                   // Duyệt qua tất cả dữ liệu lấy từ database và hiển thị
                   foreach ($users as $user) {
                     echo '<tr>';
-                    echo '<td><input type="checkbox"></td>';
+                  
                     echo '<td>' . htmlspecialchars($user['email'] ?? '') . '</td>';
                     echo '<td>' . htmlspecialchars($user['username'] ?? '') . '</td>';
                     echo '<td>' . htmlspecialchars($user['password'] ?? '') . '</td>';
@@ -174,15 +174,15 @@
     <script type="text/javascript" src="js/plugins/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="js/plugins/dataTables.bootstrap.min.js"></script>
     <script type="text/javascript">
-      $('#sampleTable').DataTable();
+      //$('#sampleTable').DataTable();
     </script>
     <script>
-      oTable = $('#sampleTable').dataTable();
-      $('#all').click(function(e) {
-        $('#sampleTable tbody :checkbox').prop('checked', $(this).is(':checked'));
-        e.stopImmediatePropagation();
-      });
-
+      //oTable = $('#sampleTable').dataTable();
+     // $('#all').click(function(e) {
+      //  $('#sampleTable tbody :checkbox').prop('checked', $(this).is(':checked'));
+        //e.stopImmediatePropagation();
+     // });
+//
       // Hàm cập nhật vai trò người dùng
       function viewDetails(email) {
         // Gửi yêu cầu AJAX

@@ -29,11 +29,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Mật khẩu chính xác, lưu thông tin người dùng vào session
             $_SESSION['username'] = $result['username'];
             $_SESSION['vaiTro'] = $result['vaiTro']; // Lưu vai trò người dùng vào session
-    
+
             // Kiểm tra vai trò của người dùng
             if ($_SESSION['vaiTro'] == 'admin') {
                 // Nếu người dùng là admin, chuyển hướng đến trang quản trị
-                header("Location:view/layout/Dashboard.php");
+                header("Location:view/layout/bangDK.php");
                 exit();
             } else {
                 // Nếu người dùng không phải admin, không cho phép truy cập
@@ -53,24 +53,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: index.php");
         exit();
     }
-
 }
 ?>
 
 
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <title>Đăng nhập quản trị | Website quản trị v2.0</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-    <link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
-    <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-    <link rel="stylesheet" type="text/css" href="css/util.css">
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="view/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="view/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="view/vendor/animate/animate.css">
+    <link rel="stylesheet" type="text/css" href="view/vendor/css-hamburgers/hamburgers.min.css">
+    <link rel="stylesheet" type="text/css" href="view/vendor/select2/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="view/css/util.css">
+    <link rel="stylesheet" type="text/css" href="view/css/main.css">
+
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
@@ -125,15 +126,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <!--Javascript-->
-    <script src="/js/main.js"></script>
+    <script src="view/js/main.js"></script>
     <script src="https://unpkg.com/boxicons@latest/dist/boxicons.js"></script>
-    <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
-    <script src="vendor/bootstrap/js/popper.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="vendor/select2/select2.min.js"></script>
+    <script src="view/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="viewvendor/bootstrap/js/popper.js"></script>
+    <script src="view/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="view/vendor/select2/select2.min.js"></script>
     <script type="text/javascript">
         //show - hide mật khẩu
-        $(".click-eye").click(function () {
+        $(".click-eye").click(function() {
             $(this).toggleClass("bx-show bx-hide");
             var input = $($(this).attr("toggle"));
             if (input.attr("type") == "password") {
@@ -144,4 +145,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         });
     </script>
 </body>
-

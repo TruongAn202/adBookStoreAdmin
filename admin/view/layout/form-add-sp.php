@@ -47,14 +47,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $maSach = generateBookCode();
     $tenSach = $_POST['tenSach'];
     $soLuong = $_POST['soLuong'];
-   
+
     $maLoai = $_POST['maLoai'];
     $maNXB = $_POST['maNXB'];
     $giaBan = $_POST['giaBan'];
     $giaKhuyenMai = $_POST['giaKhuyenMai'];
     $maTG = $_POST['maTG'];
-    $moTa= $_POST['moTa'];
-    $moTaDayDu= $_POST['moTaDayDu'];
+    $moTa = $_POST['moTa'];
+    $moTaDayDu = $_POST['moTaDayDu'];
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Kiểm tra dữ liệu đầu vào từ form
@@ -66,54 +66,66 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $giaKhuyenMai = isset($_POST['giaKhuyenMai']) ? $_POST['giaKhuyenMai'] : 0;
         $maTG = isset($_POST['maTG']) ? $_POST['maTG'] : '';
         $moTa = isset($_POST['moTa']) ? $_POST['moTa'] : '';
-        $moTaDayDu= isset($_POST['moTaDayDu']) ? $_POST['moTaDayDu'] : '';
+        $moTaDayDu = isset($_POST['moTaDayDu']) ? $_POST['moTaDayDu'] : '';
         $tinhTrang = ($soLuong <= 0) ? "Hết Hàng" : "Còn Hàng";
         // Mã sách tự sinh
         $maSach = generateBookCode();
-    
+
         // Kiểm tra ảnh và tải lên
         if (isset($_FILES['anh1']) && $_FILES['anh1']['error'] == 0) {
             $fileTmpPath = $_FILES['anh1']['tmp_name'];
             $fileName = $_FILES['anh1']['name'];
-            $uploadDir = 'assets/img-sanpham/'; // Đảm bảo thư mục này tồn tại
-            $uploadFilePath = $uploadDir . $fileName;
-    
+            // Đường dẫn 1 - nằm trong thư mục admin
+            $uploadDir1 = $_SERVER['DOCUMENT_ROOT'] . '/adBookStoreUser/admin/view/layout/' . 'assets/img-sanpham/';
+            $uploadFilePath1 = $uploadDir1 . $fileName;
+
+            // Đường dẫn 2 - view/layout/assets/image/
+            $uploadDir2 = $_SERVER['DOCUMENT_ROOT'] . '/adBookStoreUser/view/layout/' . 'assets/image/';
+            $uploadFilePath2 = $uploadDir2 . $fileName;
+
             // Di chuyển ảnh vào thư mục
-            if (move_uploaded_file($fileTmpPath, $uploadFilePath)) {
-                // Câu lệnh SQL để chèn dữ liệu vào bảng sách
-                $stmtInsert = $conn->prepare("INSERT INTO sach (maSach, tenSach, SoLuong, TinhTrang, maLoai, maNXB, gia, giaKM, maTG, anh,moTa,moTaDayDu) 
-                                            VALUES (:maSach, :tenSach, :soLuong, :tinhTrang, :maLoai, :maNXB, :giaBan, :giaKhuyenMai, :maTG, :anh,:moTa,:moTaDayDu)");
+            if (move_uploaded_file($fileTmpPath, $uploadFilePath1)) {
+                // Sao chép file đến thư mục thứ hai
+                if (copy($uploadFilePath1, $uploadFilePath2)) {
+                    // Câu lệnh SQL để chèn dữ liệu vào bảng sách
+                    $stmtInsert = $conn->prepare(
+                        "INSERT INTO sach (maSach, tenSach, SoLuong, TinhTrang, maLoai, maNXB, gia, giaKM, maTG, anh, moTa, moTaDayDu) 
+                         VALUES (:maSach, :tenSach, :soLuong, :tinhTrang, :maLoai, :maNXB, :giaBan, :giaKhuyenMai, :maTG, :anh, :moTa, :moTaDayDu)"
+                    );
     
-                // Liên kết các tham số với giá trị
-                $stmtInsert->bindParam(':maSach', $maSach);
-                $stmtInsert->bindParam(':tenSach', $tenSach);
-                $stmtInsert->bindParam(':soLuong', $soLuong);
-                $stmtInsert->bindParam(':tinhTrang', $tinhTrang);
-                $stmtInsert->bindParam(':maLoai', $maLoai);
-                $stmtInsert->bindParam(':maNXB', $maNXB);
-                $stmtInsert->bindParam(':giaBan', $giaBan);
-                $stmtInsert->bindParam(':giaKhuyenMai', $giaKhuyenMai);
-                $stmtInsert->bindParam(':maTG', $maTG);
-                $stmtInsert->bindParam(':moTa', $moTa);
-                $stmtInsert->bindParam(':moTaDayDu', $moTaDayDu);
-                $stmtInsert->bindParam(':anh', $fileName); // Lưu tên ảnh vào CSDL
+                    // Liên kết tham số
+                    $stmtInsert->bindParam(':maSach', $maSach);
+                    $stmtInsert->bindParam(':tenSach', $tenSach);
+                    $stmtInsert->bindParam(':soLuong', $soLuong);
+                    $stmtInsert->bindParam(':tinhTrang', $tinhTrang);
+                    $stmtInsert->bindParam(':maLoai', $maLoai);
+                    $stmtInsert->bindParam(':maNXB', $maNXB);
+                    $stmtInsert->bindParam(':giaBan', $giaBan);
+                    $stmtInsert->bindParam(':giaKhuyenMai', $giaKhuyenMai);
+                    $stmtInsert->bindParam(':maTG', $maTG);
+                    $stmtInsert->bindParam(':moTa', $moTa);
+                    $stmtInsert->bindParam(':moTaDayDu', $moTaDayDu);
+                    $stmtInsert->bindParam(':anh', $fileName); // Lưu tên file ảnh vào CSDL
     
-                // Thực thi câu lệnh SQL
-                if ($stmtInsert->execute()) {
-                    $_SESSION['success_message'] = "Sách đã được thêm thành công!";
-                    header("Location: quanlisanpham.php");
-                    exit();
+                    // Thực thi câu lệnh SQL
+                    if ($stmtInsert->execute()) {
+                        $_SESSION['success_message'] = "Sách đã được thêm thành công!";
+                        header("Location: quanlisanpham.php");
+                        exit();
+                    } else {
+                        echo "Lỗi khi thêm sách vào cơ sở dữ liệu.";
+                    }
                 } else {
-                    echo "Lỗi khi thêm sách.";
+                    echo "Lỗi khi sao chép file vào thư mục thứ hai.";
                 }
             } else {
-                echo "Lỗi khi tải lên ảnh.";
+                echo "Lỗi khi tải lên file vào thư mục đầu tiên.";
             }
         } else {
             echo "Chưa chọn ảnh hoặc có lỗi khi tải ảnh.";
         }
     }
-}    
+}
 ?>
 
 
@@ -149,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <!-- Sidebar menu-->
     <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
-    <aside class="app-sidebar">
+    <!-- <aside class="app-sidebar">
         <ul class="app-menu">
             <li><a class="app-menu__item " href="bangDK.php"><i class='app-menu__icon bx bx-tachometer'></i><span
                         class="app-menu__label">Bảng điều khiển</span></a></li>
@@ -162,7 +174,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <li><a class="app-menu__item " href="quanliTaiKhoan.php"><i class='app-menu__icon bx bx-id-card'></i>
                     <span class="app-menu__label">Quản lý Tài Khoản</span></a></li>
         </ul>
-    </aside>
+    </aside> -->
 
     <main class="app-content">
         <div class="app-title">
@@ -211,9 +223,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <input class="form-control" type="number" name="soLuong" placeholder="Nhập số lượng">
                                 </div>
 
-                                
-                               
-                                
+
+
+
                                 <div class="form-group col-md-3">
                                     <label class="control-label">Mô tả</label>
                                     <input class="form-control" type="text" name="moTa" placeholder="Nhập Mô Tả">
@@ -332,10 +344,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="maLoai">Mã Danh Mục</label>
                             <input type="text" class="form-control" id="maLoai" name="maLoai" required>
-                        </div>
+                        </div> -->
                         <div class="form-group">
                             <label for="tenLoai">Tên Danh Mục</label>
                             <input type="text" class="form-control" id="tenLoai" name="tenLoai" required>

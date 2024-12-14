@@ -11,7 +11,7 @@ if ($conn === null) {
 // Hàm lấy tất cả sách
 function getBooks($conn)
 {
-    $sql = "SELECT maSach,tenSach,loaisach.tenLoai,giaKM,anh,SoLuong,TinhTrang FROM sach join loaisach on sach.maLoai=loaisach.maLoai";
+    $sql = "SELECT maSach,tenSach,loaisach.tenLoai,giaKM,anh,SoLuong,TinhTrang,moTa FROM sach join loaisach on sach.maLoai=loaisach.maLoai";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -102,14 +102,14 @@ if (isset($_SESSION['success_message'])) {
         <!-- Navbar Right Menu-->
         <ul class="app-nav">
             <!-- User Menu-->
-            <li><a class="app-nav__item" href="/index.html"><i class='bx bx-log-out bx-rotate-180'></i> </a>
+            <li><a class="app-nav__item" href="/adBookStoreUser/admin/index.php"><i class='bx bx-log-out bx-rotate-180'></i> </a>
             </li>
         </ul>
     </header>
     <!-- Sidebar menu-->
     <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
     <aside class="app-sidebar">
-        <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="/images/Admin.png" width="50px"
+        <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="assets/images/Admin.png" width="50px"
                 alt="User Image">
             <div>
                 <p class="app-sidebar__user-name"><b>Admin</b></p>
@@ -168,6 +168,7 @@ if (isset($_SESSION['success_message'])) {
                                     <th>Ảnh</th>
                                     <th>Số Lượng</th>
                                     <th>Tình Trạng</th>
+                                    <th>Mô Tả</th>
                                     <th>Danh Mục</th>
                                     <th>Chức năng</th>
                                 </tr>
@@ -178,15 +179,14 @@ if (isset($_SESSION['success_message'])) {
                                         <tr>
                                             <td><?php echo $row['maSach']; ?></td>
                                             <td><?php echo $row['tenSach']; ?></td>
-                                            <td><?php echo number_format($row['giaKM'], 0, ',', '.'); ?> đ</td>
+                                            <td><?php echo number_format($row['giaKM'], 0, ',', '.'); ?> VND</td>
                                             <td>
                                                 <?php
                                                 // Đường dẫn đến ảnh trong các thư mục
                                                 $image_path_1 = "assets/img-sanpham/" . $row['anh'];
-                                                // Kiểm tra đường dẫn tuyệt đối của ảnh để chẩn đoán vấn đề
                                                 // Kiểm tra ảnh trong thư mục img-sanpham/
                                                 if (file_exists($image_path_1)) {
-                                                    echo '<img src="' . $image_path_1 . '" alt="Ảnh sách" width="100px">';
+                                                    echo '<img src="' . $image_path_1 . '" alt="Ảnh sách" width="150px">';
                                                 }
                                                 // Nếu ảnh không tồn tại, hiển thị thông báo lỗi hoặc ảnh mặc định
                                                 else {
@@ -207,7 +207,10 @@ if (isset($_SESSION['success_message'])) {
                                                     <span class="badge bg-success">Còn hàng</span>
                                                 <?php endif; ?>
                                             </td>
+                                            <td><?php echo $row['moTa']; ?></td>
                                             <td><?php echo $row['tenLoai']; ?></td>
+                                            
+                                           
                                             <td>
                                                 <a href="delete.php?id=<?php echo $row['maSach']; ?>"
                                                     class="btn btn-primary btn-sm trash" title="Xóa"
@@ -315,9 +318,9 @@ if (isset($_SESSION['success_message'])) {
                 rows.forEach(row => row.style.display = '');
             }
         }
-        oTable = $('#sampleTable').DataTable({
-            searching: true // Tắt tính năng tìm kiếm
-        });
+       // oTable = $('#sampleTable').DataTable({
+            //searching: true // Tắt tính năng tìm kiếm
+        // });
         // $(document).ready(function() {
         //     // Khởi tạo DataTable với phân trang
         //     var table = $('#sampleTable').DataTable({

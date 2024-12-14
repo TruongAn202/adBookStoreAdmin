@@ -73,23 +73,24 @@ function tongThuNhap($conn)
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     return $result['tongGia'];
 }
-function getProductsData($conn)
+function getProductsByPage($conn, $currentPage, $itemsPerPage)
 {
-    // Câu truy vấn SQL để lấy thông tin từ bảng sach và chitiethoadon
+    // Tính toán OFFSET
+    $startIndex = ($currentPage - 1) * $itemsPerPage;
+
+    // Truy vấn dữ liệu sản phẩm theo trang
     $sql = "SELECT s.maSach, s.tenSach, ls.tenLoai, c.donGia
             FROM loaisach ls
-            JOIN sach s on ls.maLoai=s.maLoai
-            JOIN chitiethoadon c ON s.masach = c.masach";
+            JOIN sach s ON ls.maLoai = s.maLoai
+            JOIN chitiethoadon c ON s.maSach = c.maSach
+            LIMIT :startIndex, :itemsPerPage";
 
-    // Chuẩn bị và thực thi câu truy vấn
     $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':startIndex', $startIndex, PDO::PARAM_INT);
+    $stmt->bindParam(':itemsPerPage', $itemsPerPage, PDO::PARAM_INT);
     $stmt->execute();
 
-    // Lấy tất cả kết quả
-    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Trả về kết quả
-    return $results;
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 function tongDH($conn)
 {
@@ -128,9 +129,9 @@ function thongTinSPHetHang($conn, $tinhTrang = 'hết hàng')
     // Trả về tất cả thông tin sản phẩm hết hàng
     return $result;
 }
-function donHangHuy($conn,$trangThaiHD = 'dahuy')
+function donHangHuy($conn, $trangThaiHD = 'dahuy')
 {
-    $sql= "SELECT count(*) as count FROM hoadon where trangThaiHD = :trangThaiHD";
+    $sql = "SELECT count(*) as count FROM hoadon where trangThaiHD = :trangThaiHD";
     $stmt = $conn->prepare($sql);
 
     // Gán giá trị cho tham số :tinhTrang
@@ -145,15 +146,18 @@ function donHangHuy($conn,$trangThaiHD = 'dahuy')
     // Trả về số lượng sách hết hàng
     return $result['count'];
 }
+$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Trang hiện tại
+$itemsPerPage = 5; // Số sản phẩm hiển thị mỗi trang
+$totalPages = 5; // Tổng số trang cố định
 
 $out_of_stock_count = getTotalOutOfStockBooks($conn);
 $tongSP = TongSanPham($conn);
 $tongHD = soLuongDH($conn);
 $tongTN = tongThuNhap($conn);
-$tongSPBChay = getProductsData($conn);
+$tongSPBChay = getProductsByPage($conn, $currentPage, $itemsPerPage);
 $tongDH = tongDH($conn);
 $tongSPHH = thongTinSPHetHang($conn);
-$dhHuy=donHangHuy($conn);
+$dhHuy = donHangHuy($conn);
 ?>
 
 
@@ -193,14 +197,14 @@ $dhHuy=donHangHuy($conn);
         <!-- Navbar Right Menu-->
         <ul class="app-nav">
             <!-- User Menu-->
-            <li><a class="app-nav__item" href="bangDK.php"><i class='bx bx-log-out bx-rotate-180'></i> </a>
+            <li><a class="app-nav__item" href="/adBookStoreUser/admin/index.php"><i class='bx bx-log-out bx-rotate-180'></i> </a>
             </li>
         </ul>
     </header>
     <!-- Sidebar menu-->
     <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
     <aside class="app-sidebar">
-        <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="/images/Admin.png" width="50px"
+        <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="assets/images/Admin.png" width="50px"
                 alt="User Image">
             <div>
                 <p class="app-sidebar__user-name"><b>Admin</b></p>
@@ -258,7 +262,7 @@ $dhHuy=donHangHuy($conn);
                 <div class="widget-small primary coloured-icon"><i class='icon fa-3x bx bxs-chart'></i>
                     <div class="info">
                         <h4>Tổng thu nhập</h4>
-                        <p><b><?php echo number_format($tongTN); ?> VNĐ</b></p>
+                        <p><b><?php echo number_format($tongTN, 0, ',', '.'); ?> VNĐ</b></p>
                     </div>
                 </div>
             </div>
@@ -300,12 +304,24 @@ $dhHuy=donHangHuy($conn);
                                     <tr>
                                         <td><?php echo $row['maSach']; ?></td>
                                         <td><?php echo $row['tenSach']; ?></td>
-                                        <td><?php echo $row['donGia']; ?></td>
+                                        <td><?php echo number_format($row['donGia'], 0, ',', '.'); ?> VND</td>
                                         <td><?php echo $row['tenLoai']; ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+                        <nav>
+                            <ul style="list-style: none; display: flex;">
+                                <?php for ($page = 1; $page <= $totalPages; $page++): ?>
+                                    <li style="margin: 0 5px;">
+                                        <a href="?page=<?php echo $page; ?>"
+                                            style="text-decoration: none; padding: 5px 10px; border: 1px solid #000; <?php echo $page == $currentPage ? 'background-color: #ccc;' : ''; ?>">
+                                            <?php echo $page; ?>
+                                        </a>
+                                    </li>
+                                <?php endfor; ?>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -334,7 +350,7 @@ $dhHuy=donHangHuy($conn);
                                         <td><?php echo $row['tenNguoiNhan']; ?></td>
                                         <td><?php echo $row['tenSach']; ?></td>
                                         <td><?php echo $row['SoLuong']; ?></td>
-                                        <td><?php echo $row['donGia']; ?></td>
+                                        <td><?php echo number_format($row['donGia'], 0, ',', '.'); ?> VND</td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -370,10 +386,10 @@ $dhHuy=donHangHuy($conn);
                                         <td><?php echo $row['anh']; ?></td>
                                         <td><?php echo $row['SoLuong']; ?></td>
                                         <td><?php echo $row['TinhTrang']; ?></td>
-                                        <td><?php echo $row['gia']; ?></td>
+                                        <td><?php echo number_format($row['gia'], 0, ',', '.'); ?> VND</td>
                                         <td><?php echo $row['tenLoai']; ?></td>
                                     </tr>
-                                    <?php endforeach; ?>
+                                <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>

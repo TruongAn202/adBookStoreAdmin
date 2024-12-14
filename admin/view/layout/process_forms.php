@@ -68,7 +68,7 @@ try {
     // Kiểm tra nếu form Danh Mục được gửi
     if (isset($_POST['submitCategory'])) {
         $maLoai = $_POST['maLoai'];
-        //$maLoai = generateCode('L', 10);
+        $maLoai = generateCode('L', 4);
         $tenLoai = $_POST['tenLoai'];
 
         // Kiểm tra xem mã danh mục đã tồn tại trong cơ sở dữ liệu chưa
